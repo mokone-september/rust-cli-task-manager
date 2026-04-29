@@ -1,14 +1,21 @@
+// src/main.rs
+
 mod task;
 
 use clap::{Parser, Subcommand};
-use task::Task;
+use std::error::Error;
 use std::fs;
+use task::Task;
 
 const FILE: &str = "tasks.json";
 
 #[derive(Parser)]
-#[command(name = "task")]
-#[command(about = "Simple CLI task manager")]
+#[command(
+    name = "task",
+    version = "1.0",
+    about = "A simple command-line task manager built with Rust",
+    long_about = "Manage your tasks from the terminal using Rust."
+)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -16,60 +23,108 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    Add { title: String },
+    /// Add a new task
+    Add {
+        title: String,
+    },
+
+    /// List all tasks
     List,
-    Done { id: u32 },
-    Delete { id: u32 },
+
+    /// Mark a task as completed
+    Done {
+        id: u32,
+    },
+
+    /// Delete a task
+    Delete {
+        id: u32,
+    },
 }
 
-fn load_tasks() -> Vec<Task> {
-    let data = fs::read_to_string(FILE).unwrap_or("[]".to_string());
-    serde_json::from_str(&data).unwrap_or(vec![])
+fn load_tasks() -> Result<Vec<Task>, Box<dyn Error>> {
+    let data = match fs::read_to_string(FILE) {
+        Ok(content) => content,
+        Err(_) => return Ok(vec![]),
+    };
+
+    let tasks: Vec<Task> = serde_json::from_str(&data)?;
+    Ok(tasks)
 }
 
-fn save_tasks(tasks: &Vec<Task>) {
-    let data = serde_json::to_string_pretty(tasks).unwrap();
-    fs::write(FILE, data).unwrap();
+fn save_tasks(tasks: &Vec<Task>) -> Result<(), Box<dyn Error>> {
+    let data = serde_json::to_string_pretty(tasks)?;
+    fs::write(FILE, data)?;
+    Ok(())
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
-    let mut tasks = load_tasks();
+
+    let mut tasks = load_tasks()?;
 
     match cli.command {
         Commands::Add { title } => {
-            let id = tasks.len() as u32 + 1;
+            let id = tasks.last().map_or(1, |task| task.id + 1);
+
             let task = Task {
                 id,
                 title,
                 completed: false,
             };
+
             tasks.push(task);
-            save_tasks(&tasks);
-            println!("Task added.");
+
+            save_tasks(&tasks)?;
+
+            println!("✅ Task added successfully.");
         }
 
         Commands::List => {
-            for task in tasks {
-                let status = if task.completed { "✔" } else { "✘" };
-                println!("{} [{}] {}", task.id, status, task.title);
+            if tasks.is_empty() {
+                println!("📭 No tasks found.");
+            } else {
+                println!("\n📋 Task List\n");
+
+                for task in tasks {
+                    let status = if task.completed { "✔" } else { "✘" };
+
+                    println!("{} [{}] {}", task.id, status, task.title);
+                }
             }
         }
 
         Commands::Done { id } => {
+            let mut found = false;
+
             for task in &mut tasks {
                 if task.id == id {
                     task.completed = true;
+                    found = true;
                 }
             }
-            save_tasks(&tasks);
-            println!("Task marked as done.");
+
+            if found {
+                save_tasks(&tasks)?;
+                println!("✅ Task marked as completed.");
+            } else {
+                println!("❌ Task not found.");
+            }
         }
 
         Commands::Delete { id } => {
-            tasks.retain(|t| t.id != id);
-            save_tasks(&tasks);
-            println!("Task deleted.");
+            let original_length = tasks.len();
+
+            tasks.retain(|task| task.id != id);
+
+            if tasks.len() < original_length {
+                save_tasks(&tasks)?;
+                println!("🗑️ Task deleted successfully.");
+            } else {
+                println!("❌ Task not found.");
+            }
         }
     }
+
+    Ok(())
 }

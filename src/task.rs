@@ -1,4 +1,6 @@
-use serde::{Serialize, Deserialize};
+// src/task.rs
+
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Task {
