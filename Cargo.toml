@@ -1,7 +1,9 @@
+# Cargo.toml
+
 [package]
 name = "rust-cli-task-manager"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
