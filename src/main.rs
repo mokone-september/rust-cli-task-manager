@@ -1,68 +1,16 @@
 // src/main.rs
 
+mod cli;
+mod storage;
 mod task;
 
+use clap::Parser;
+use cli::{Cli, Commands};
 use chrono::Local;
-use clap::{Parser, Subcommand};
-use std::error::Error;
-use std::fs;
+use storage::{load_tasks, save_tasks};
 use task::Task;
 
-const FILE: &str = "tasks.json";
-
-#[derive(Parser)]
-#[command(
-    name = "task",
-    version = "1.0",
-    about = "A simple command-line task manager built with Rust",
-    long_about = "Manage your tasks from the terminal using Rust."
-)]
-struct Cli {
-    #[command(subcommand)]
-    command: Commands,
-}
-
-#[derive(Subcommand)]
-enum Commands {
-    /// Add a new task
-    Add {
-        title: String,
-    },
-
-    /// List tasks
-    List {
-        #[arg(long)]
-        completed: bool,
-    },
-
-    /// Mark task as completed
-    Done {
-        id: u32,
-    },
-
-    /// Delete a task
-    Delete {
-        id: u32,
-    },
-}
-
-fn load_tasks() -> Result<Vec<Task>, Box<dyn Error>> {
-    let data = match fs::read_to_string(FILE) {
-        Ok(content) => content,
-        Err(_) => return Ok(vec![]),
-    };
-
-    let tasks: Vec<Task> = serde_json::from_str(&data)?;
-    Ok(tasks)
-}
-
-fn save_tasks(tasks: &Vec<Task>) -> Result<(), Box<dyn Error>> {
-    let data = serde_json::to_string_pretty(tasks)?;
-    fs::write(FILE, data)?;
-    Ok(())
-}
-
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
     let mut tasks = load_tasks()?;
