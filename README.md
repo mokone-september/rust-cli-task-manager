@@ -12,7 +12,9 @@ A simple command-line task manager built with Rust.
 - List tasks
 - Mark tasks as completed
 - Delete tasks
-- Store tasks using JSON
+- Filter completed tasks
+- Save tasks using JSON
+- Task timestamps
 - CLI argument parsing with clap
 
 ---
@@ -39,9 +41,13 @@ Add a task:
 
 cargo run -- add "Learn Rust"
 
-List tasks:
+List all tasks:
 
 cargo run -- list
+
+List only completed tasks:
+
+cargo run -- list --completed
 
 Mark a task as completed:
 
@@ -57,13 +63,16 @@ cargo run -- --help
 
 ---
 
+## Example Output
+
+📋 Task List
+
+1 [✔] Learn Rust (2026-04-26 10:15:22)
+2 [✘] Build API (2026-04-26 10:20:10)
+
+---
+
 ## Screenshot
-
-Add your screenshot inside:
-
-screenshots/demo.png
-
-Then include:
 
 ![CLI Demo](screenshots/demo.png)
 
@@ -80,12 +89,14 @@ This project helped me learn:
 - JSON persistence
 - Serialization with serde
 - CLI argument parsing
+- Timestamps in Rust
 
 ---
 
 ## Tech Stack
 
 - Rust
+- chrono
 - clap
 - serde
 - serde_json
@@ -95,7 +106,7 @@ This project helped me learn:
 ## Future Improvements
 
 - Better error handling
-- Task timestamps
-- Filtering completed tasks
-- SQLite support
+- SQLite database support
 - Colored terminal output
+- Task priorities
+- Search functionality

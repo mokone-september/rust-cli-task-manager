@@ -2,6 +2,7 @@
 
 mod task;
 
+use chrono::Local;
 use clap::{Parser, Subcommand};
 use std::error::Error;
 use std::fs;
@@ -28,10 +29,13 @@ enum Commands {
         title: String,
     },
 
-    /// List all tasks
-    List,
+    /// List tasks
+    List {
+        #[arg(long)]
+        completed: bool,
+    },
 
-    /// Mark a task as completed
+    /// Mark task as completed
     Done {
         id: u32,
     },
@@ -71,6 +75,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 id,
                 title,
                 completed: false,
+                created_at: Local::now()
+                    .format("%Y-%m-%d %H:%M:%S")
+                    .to_string(),
             };
 
             tasks.push(task);
@@ -80,16 +87,26 @@ fn main() -> Result<(), Box<dyn Error>> {
             println!("✅ Task added successfully.");
         }
 
-        Commands::List => {
+        Commands::List { completed } => {
             if tasks.is_empty() {
                 println!("📭 No tasks found.");
             } else {
                 println!("\n📋 Task List\n");
 
                 for task in tasks {
+                    if completed && !task.completed {
+                        continue;
+                    }
+
                     let status = if task.completed { "✔" } else { "✘" };
 
-                    println!("{} [{}] {}", task.id, status, task.title);
+                    println!(
+                        "{} [{}] {} ({})",
+                        task.id,
+                        status,
+                        task.title,
+                        task.created_at
+                    );
                 }
             }
         }
