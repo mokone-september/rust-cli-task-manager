@@ -16,6 +16,7 @@ A simple command-line task manager built with Rust.
 - Save tasks using JSON
 - Task timestamps
 - CLI argument parsing with clap
+- Basic testing with cargo test
 
 ---
 
@@ -63,6 +64,14 @@ cargo run -- --help
 
 ---
 
+## Running Tests
+
+Run all tests:
+
+cargo test
+
+---
+
 ## Example Output
 
 📋 Task List
@@ -90,6 +99,7 @@ This project helped me learn:
 - Serialization with serde
 - CLI argument parsing
 - Timestamps in Rust
+- Basic testing in Rust
 
 ---
 

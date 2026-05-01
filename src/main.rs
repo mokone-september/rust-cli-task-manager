@@ -1,3 +1,5 @@
+// src/main.rs
+
 mod cli;
 mod storage;
 mod task;
@@ -21,7 +23,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 id,
                 title,
                 completed: false,
-                created_at: Local::now().format("%Y-%m-%d %H:%M:%S").to_string(),
+                created_at: Local::now()
+                    .format("%Y-%m-%d %H:%M:%S")
+                    .to_string(),
             };
 
             tasks.push(task);
@@ -46,7 +50,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                     println!(
                         "{} [{}] {} ({})",
-                        task.id, status, task.title, task.created_at
+                        task.id,
+                        status,
+                        task.title,
+                        task.created_at
                     );
                 }
             }
