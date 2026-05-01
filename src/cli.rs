@@ -1,5 +1,3 @@
-// src/cli.rs
-
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -17,9 +15,7 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Add a new task
-    Add {
-        title: String,
-    },
+    Add { title: String },
 
     /// List tasks
     List {
@@ -28,12 +24,8 @@ pub enum Commands {
     },
 
     /// Mark task as completed
-    Done {
-        id: u32,
-    },
+    Done { id: u32 },
 
     /// Delete a task
-    Delete {
-        id: u32,
-    },
+    Delete { id: u32 },
 }
