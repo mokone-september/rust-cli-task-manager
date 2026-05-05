@@ -29,7 +29,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             };
 
             tasks.push(task);
-
             save_tasks(&tasks)?;
 
             println!("✅ Task added successfully.");

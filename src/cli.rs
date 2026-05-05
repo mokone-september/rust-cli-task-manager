@@ -6,8 +6,7 @@ use clap::{Parser, Subcommand};
 #[command(
     name = "task",
     version = "1.0",
-    about = "A simple command-line task manager built with Rust",
-    long_about = "Manage your tasks from the terminal using Rust."
+    about = "A simple command-line task manager built with Rust"
 )]
 pub struct Cli {
     #[command(subcommand)]
@@ -16,24 +15,11 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Add a new task
-    Add {
-        title: String,
-    },
-
-    /// List tasks
+    Add { title: String },
     List {
         #[arg(long)]
         completed: bool,
     },
-
-    /// Mark task as completed
-    Done {
-        id: u32,
-    },
-
-    /// Delete a task
-    Delete {
-        id: u32,
-    },
+    Done { id: u32 },
+    Delete { id: u32 },
 }
